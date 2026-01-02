@@ -6,25 +6,109 @@
 <title>認知訓練系統</title>
 
 <style>
-body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #f5f7fa; color: #1f2937; }
-.container { min-height: 100vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; max-width: 600px; margin: 0 auto; }
-h1 { text-align: center; font-size: 2rem; font-weight: 900; margin-bottom: 10px; color: #1e3a8a; }
-.hidden { display: none !important; }
+  /* 基礎重設與背景 */
+  body { 
+    margin: 0; 
+    font-family: system-ui, -apple-system, sans-serif; 
+    background: #f5f7fa; 
+    color: #1f2937; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; /* 確保 body 佔滿全高 */
+  }
 
-/* 按鈕樣式 */
-button { font-size: 1.5rem; padding: 20px; border-radius: 20px; border: none; font-weight: 700; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-button:active { transform: scale(0.95); }
-.menu button { background: #2563eb; color: #fff; margin: 10px 0; width: 100%; }
-.btn-finish { background: #10b981; color: white; width: 100%; margin-top: 20px; font-size: 1.8rem; }
-.btn-home { background: #6b7280; color: white; width: 100%; margin-top: 10px; }
+  /* 主容器：控制整體置中與響應式寬度 */
+  .container { 
+    width: 100%;
+    max-width: 500px; /* 適合手機與 iPad 的寬度 */
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; /* 內容垂直置中 */
+    padding: 20px; 
+    box-sizing: border-box; 
+    margin: 0 auto; 
+  }
 
-/* 遊戲網格 */
-.grid { flex: 1; display: grid; gap: 16px; margin: 20px 0; min-height: 400px; align-content: center; }
-.block { width: 100%; aspect-ratio: 1/1; border-radius: 20px; transition: background 0.3s; cursor: pointer; border: 4px solid transparent; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-.block.matched { cursor: default; filter: brightness(0.9); border-color: #10b981; }
+  h1 { 
+    text-align: center; 
+    font-size: 2.2rem; 
+    font-weight: 900; 
+    margin-bottom: 20px; 
+    color: #1e3a8a; 
+  }
 
-.info { text-align: center; font-size: 1.6rem; margin: 10px; font-weight: 700; line-height: 1.4; }
-.sub { font-size: 1.1rem; color: #4b5563; display: block; margin-top: 5px; font-weight: 400; }
+  .hidden { display: none !important; }
+
+  /* 按鈕樣式：確保在觸控設備上易於點選 */
+  button { 
+    font-size: 1.4rem; 
+    padding: 18px; 
+    border-radius: 20px; 
+    border: none; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: transform 0.1s, opacity 0.2s; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+    width: 100%;
+    margin: 8px 0;
+  }
+  
+  button:active { transform: scale(0.96); }
+  
+  .menu button { background: #2563eb; color: #fff; }
+  .btn-finish { background: #10b981; color: white; margin-top: 20px; font-size: 1.6rem; }
+  .btn-home { background: #6b7280; color: white; margin-top: 10px; }
+
+  /* 遊戲網格：自動適應螢幕 */
+  .grid { 
+    display: grid; 
+    gap: 12px; 
+    margin: 20px 0; 
+    align-content: center; 
+    justify-content: center;
+  }
+  
+  .block { 
+    width: 100%; 
+    aspect-ratio: 1/1; 
+    border-radius: 16px; 
+    transition: background 0.3s; 
+    cursor: pointer; 
+    border: 4px solid transparent; 
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); 
+  }
+  
+  .block.matched { 
+    cursor: default; 
+    filter: brightness(0.9); 
+    border-color: #10b981; 
+  }
+
+  .info { 
+    text-align: center; 
+    font-size: 1.5rem; 
+    margin: 15px 0; 
+    font-weight: 700; 
+    line-height: 1.4; 
+  }
+  
+  .sub { 
+    font-size: 1rem; 
+    color: #4b5563; 
+    display: block; 
+    margin-top: 8px; 
+    font-weight: 400; 
+  }
+
+  /* iPad 或大螢幕適配 */
+  @media (min-width: 768px) {
+    .container {
+      max-width: 600px;
+    }
+    h1 { font-size: 2.8rem; }
+  }
 </style>
 </head>
 
@@ -33,7 +117,7 @@ button:active { transform: scale(0.95); }
 
   <h1>認知訓練</h1>
 
-  <!-- ===== 首頁 ===== -->
+  <!-- ===== 首頁功能選單 ===== -->
   <div id="menu" class="menu">
     <div class="info">
       一天一次即可<br>
@@ -46,7 +130,7 @@ button:active { transform: scale(0.95); }
     <button onclick="startMatch()">🎯 注意力配對</button>
   </div>
 
-  <!-- ===== 遊戲畫面 ===== -->
+  <!-- ===== 遊戲執行畫面 ===== -->
   <div id="game" class="hidden">
     <div class="info" id="info"></div>
     <div id="grid" class="grid"></div>
@@ -57,7 +141,7 @@ button:active { transform: scale(0.95); }
 </div>
 
 <script>
-/* ===== 通用元件 ===== */
+/* ===== 通用元件與語音輔助 ===== */
 const grid = document.getElementById("grid");
 const info = document.getElementById("info");
 const menu = document.getElementById("menu");
@@ -87,9 +171,9 @@ let dementia = false;
 let board = false;
 let boardScores = [];
 
-/* ===== 記憶訓練邏輯 ===== */
-const COLORS_NORMAL = ["#ef4444", "#3b82f6", "#facc15", "#22c55e", "#f97316", "#a855f7"]; // 紅藍黃綠橘紫
-const COLORS_DEMENTIA = ["#ef4444", "#3b82f6", "#facc15"]; // 紅藍黃
+/* ===== 記憶訓練 (顏色記憶) ===== */
+const COLORS_NORMAL = ["#ef4444", "#3b82f6", "#facc15", "#22c55e", "#f97316", "#a855f7"];
+const COLORS_DEMENTIA = ["#ef4444", "#3b82f6", "#facc15"];
 let pattern = [], userPattern = [];
 
 function startMemory(d, isBoard) {
@@ -99,6 +183,7 @@ function startMemory(d, isBoard) {
   menu.classList.add("hidden");
   game.classList.remove("hidden");
   homeBtn.classList.add("hidden");
+  finishBtn.classList.remove("hidden");
 
   const colorPool = d ? COLORS_DEMENTIA : COLORS_NORMAL;
   const count = d ? 3 : 4;
@@ -106,7 +191,6 @@ function startMemory(d, isBoard) {
 
   grid.style.gridTemplateColumns = `repeat(${count}, 1fr)`;
   
-  // 隨機選取不重複顏色
   pattern = [...colorPool].sort(() => Math.random() - 0.5).slice(0, count);
   userPattern = Array(count).fill("#9ca3af");
 
@@ -139,7 +223,7 @@ function renderMemory(arr, clickable) {
   });
 }
 
-/* ===== 注意力配對邏輯 ===== */
+/* ===== 注意力配對 (翻牌遊戲) ===== */
 let matchColors = [], openBlocks = [], matchedCount = 0;
 
 function startMatch() {
@@ -147,10 +231,10 @@ function startMatch() {
   menu.classList.add("hidden");
   game.classList.remove("hidden");
   homeBtn.classList.add("hidden");
+  finishBtn.classList.add("hidden"); // 配對遊戲不需要確認按鈕
   
   matchedCount = 0;
   openBlocks = [];
-  // 3組顏色
   const baseColors = ["#ef4444", "#3b82f6", "#22c55e"]; 
   matchColors = [...baseColors, ...baseColors];
   matchColors.sort(() => Math.random() - 0.5);
@@ -163,16 +247,14 @@ function startMatch() {
   matchColors.forEach((color, i) => {
     const block = document.createElement("div");
     block.className = "block";
-    block.style.background = "#9ca3af"; // 初始灰色
+    block.style.background = "#9ca3af";
     block.dataset.color = color;
-    block.dataset.index = i;
     block.onclick = () => clickMatch(block);
     grid.appendChild(block);
   });
 }
 
 function clickMatch(el) {
-  // 如果已經翻開兩張、或是點到已經配對成功的、或是點到當前翻開的，則無效
   if (openBlocks.length >= 2 || el.classList.contains("matched") || el.dataset.open === "true") return;
 
   const color = el.dataset.color;
@@ -182,8 +264,7 @@ function clickMatch(el) {
 
   if (openBlocks.length === 2) {
     if (openBlocks[0].dataset.color === openBlocks[1].dataset.color) {
-      // 配對成功
-      speak("很好，找到一對");
+      speak("很好");
       openBlocks.forEach(b => {
         b.classList.add("matched");
         b.dataset.open = "false";
@@ -194,14 +275,11 @@ function clickMatch(el) {
       if (matchedCount === matchColors.length) {
         setTimeout(() => {
           info.innerHTML = "挑戰成功！<br><span class='sub'>注意力集中度良好</span>";
-          speak("做得太棒了，注意力很集中");
-          finishBtn.classList.add("hidden");
+          speak("做得太棒了");
           homeBtn.classList.remove("hidden");
         }, 500);
       }
     } else {
-      // 配對失敗
-      speak("不對喔，再試試");
       setTimeout(() => {
         openBlocks.forEach(b => {
           b.style.background = "#9ca3af";
@@ -213,7 +291,7 @@ function clickMatch(el) {
   }
 }
 
-/* ===== 結算與控制 ===== */
+/* ===== 結算與流程控制 ===== */
 function finish() {
   if (mode === "memory") {
     let correct = 0;
@@ -223,24 +301,20 @@ function finish() {
     if (board) {
       boardScores.push(score);
       if (boardScores.length < 3) {
-        speak("休息一下，準備下一局");
-        setTimeout(() => startMemory(false, true), 1500);
+        speak("下一局");
+        setTimeout(() => startMemory(false, true), 1000);
         return;
       }
       const avg = Math.round(boardScores.reduce((a, b) => a + b) / 3);
-      info.innerHTML = `訓練完成<br>今日整體表現：${avg >= 80 ? "優秀" : avg >= 60 ? "良好" : "加油"}`;
-      speak("今天的訓練全部完成，做得很好");
+      info.innerHTML = `訓練完成<br>今日表現：${avg >= 80 ? "優秀" : "良好"}`;
+      speak("今天的訓練全部完成");
     } else {
-      info.textContent = score === 100 ? "完全正確！太厲害了" : "完成了，繼續加油";
+      info.textContent = score === 100 ? "完全正確！" : "完成了，繼續加油";
       speak("訓練完成");
     }
     
     finishBtn.classList.add("hidden");
     homeBtn.classList.remove("hidden");
-  } else if (mode === "match") {
-    // 強制完成的情況
-    speak("注意力訓練已結束");
-    goHome();
   }
 }
 
