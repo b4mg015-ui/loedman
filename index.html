@@ -6,11 +6,11 @@
 <title>認知訓練系統</title>
 
 <style>
-  /* 基礎重設與背景 */
+  /* 介面風格優化 */
   body { 
     margin: 0; 
-    font-family: system-ui, -apple-system, sans-serif; 
-    background: #f5f7fa; 
+    font-family: system-ui, -apple-system, "Microsoft JhengHei", sans-serif; 
+    background: #f0f4f8; 
     color: #1f2937; 
     display: flex; 
     justify-content: center; 
@@ -25,22 +25,30 @@
     display: flex; 
     flex-direction: column; 
     justify-content: center; 
-    padding: 20px; 
+    padding: 24px; 
     box-sizing: border-box; 
-    margin: 0 auto; 
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   }
 
-  h1 { 
-    text-align: center; 
-    font-size: 2.2rem; 
-    font-weight: 900; 
-    margin-bottom: 20px; 
-    color: #1e3a8a; 
-  }
-
+  h1 { text-align: center; font-size: 2.2rem; font-weight: 900; color: #1e3a8a; margin-bottom: 24px; }
   .hidden { display: none !important; }
 
-  /* 按鈕樣式：手機觸控優化 */
+  /* 登入與表單元件 */
+  .form-group { margin-bottom: 16px; width: 100%; }
+  label { display: block; margin-bottom: 6px; font-weight: 700; color: #374151; font-size: 1.1rem; }
+  input, select { 
+    width: 100%; 
+    padding: 14px; 
+    border: 2px solid #e5e7eb; 
+    border-radius: 14px; 
+    font-size: 1.1rem; 
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: #2563eb; outline: none; }
+
+  /* 按鈕樣式 (適合長輩點擊) */
   button { 
     font-size: 1.4rem; 
     padding: 18px; 
@@ -48,298 +56,289 @@
     border: none; 
     font-weight: 700; 
     cursor: pointer; 
-    transition: transform 0.1s, opacity 0.2s; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
     width: 100%;
-    margin: 8px 0;
+    margin: 10px 0;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
-  
   button:active { transform: scale(0.96); }
-  
-  .menu button { background: #2563eb; color: #fff; }
-  .btn-finish { background: #10b981; color: white; margin-top: 20px; font-size: 1.6rem; }
-  .btn-home { background: #6b7280; color: white; margin-top: 10px; }
+  .btn-primary { background: #2563eb; color: white; }
+  .btn-success { background: #10b981; color: white; }
+  .btn-gray { background: #9ca3af; color: white; }
 
-  .grid { 
-    display: grid; 
-    gap: 12px; 
-    margin: 20px 0; 
-    align-content: center; 
-    justify-content: center;
-  }
-  
+  /* 遊戲方塊 */
+  .grid { display: grid; gap: 14px; margin: 24px 0; }
   .block { 
-    width: 100%; 
     aspect-ratio: 1/1; 
-    border-radius: 16px; 
-    transition: background 0.3s; 
+    border-radius: 18px; 
     cursor: pointer; 
     border: 4px solid transparent; 
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); 
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
   }
-  
-  .block.matched { 
-    cursor: default; 
-    filter: brightness(0.9); 
-    border-color: #10b981; 
-  }
+  .block.matched { border-color: #10b981; filter: brightness(0.9); cursor: default; }
 
-  .info { 
-    text-align: center; 
-    font-size: 1.5rem; 
-    margin: 15px 0; 
-    font-weight: 700; 
-    line-height: 1.4; 
-  }
-  
-  .sub { 
-    font-size: 1.1rem; 
-    color: #4b5563; 
-    display: block; 
-    margin-top: 8px; 
-    font-weight: 600; 
-  }
-
-  /* 強化的等級顯示標籤 */
-  .score-badge {
-    background: #1e3a8a;
-    color: #ffffff;
-    padding: 6px 16px;
-    border-radius: 99px;
-    font-size: 1.2rem;
-    display: inline-block;
-    margin-top: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .level-text {
-    font-size: 1.4rem;
-    color: #059669;
-    margin: 10px 0;
-    display: block;
-  }
-
-  @media (min-width: 768px) {
-    .container { max-width: 600px; }
-    h1 { font-size: 2.8rem; }
-  }
+  /* 文字資訊 */
+  .info { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; line-height: 1.4; }
+  .sub { font-size: 1.1rem; color: #6b7280; display: block; margin-top: 6px; font-weight: 600; }
+  .score-badge { background: #1e3a8a; color: white; padding: 8px 20px; border-radius: 30px; margin-top: 15px; display: inline-block; font-size: 1.3rem; }
+  .encouragement { font-size: 1.5rem; color: #059669; font-weight: 900; margin-top: 10px; display: block; }
 </style>
 </head>
 
 <body>
 <div class="container">
 
-  <h1>認知訓練</h1>
-
-  <!-- 主選單 -->
-  <div id="menu" class="menu">
-    <div class="info">
-      一天一次即可<br>
-      <span class="sub">看 → 想 → 點 → 完成</span>
+  <!-- 登入畫面 -->
+  <div id="login-screen">
+    <h1>訓練系統登入</h1>
+    <div class="form-group">
+      <label>您的姓名</label>
+      <input type="text" id="user-name" placeholder="請輸入姓名">
     </div>
-
-    <button onclick="startMemory(false, false)">🧠 一般記憶訓練</button>
-    <button onclick="startBoard()">🧾 訓練板 (3次挑戰)</button>
-    <button onclick="startMemory(true, false)">👴 失智友善記憶</button>
-    <button onclick="startMatch()">🎯 注意力配對</button>
+    <div class="form-group">
+      <label>您的年齡</label>
+      <input type="number" id="user-age" placeholder="請輸入年齡">
+    </div>
+    <div class="form-group">
+      <label>目前的狀況</label>
+      <select id="user-status">
+        <option value="健康">一般健康</option>
+        <option value="有失智症狀">有失智症狀</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="login()">進入系統</button>
   </div>
 
-  <!-- 遊戲區 -->
+  <!-- 主選單 -->
+  <div id="menu" class="hidden">
+    <h1>您好，<span id="display-name"></span></h1>
+    <div class="info">請選擇訓練項目</div>
+    <button class="btn-primary" onclick="startMemory(false, false)">🧠 一般記憶訓練</button>
+    <button class="btn-success" onclick="startBoard()">🧾 訓練板 (3局挑戰)</button>
+    <button class="btn-primary" onclick="startMemory(true, false)">👴 失智友善模式</button>
+    <button class="btn-primary" onclick="startMatch()">🎯 注意力配對</button>
+    <button class="btn-gray" onclick="logout()">更換使用者</button>
+  </div>
+
+  <!-- 遊戲區域 -->
   <div id="game" class="hidden">
     <div class="info" id="info"></div>
     <div id="grid" class="grid"></div>
-    <button id="finishBtn" class="btn-finish" onclick="finish()">確認完成</button>
-    <button id="homeBtn" class="btn-home hidden" onclick="goHome()">回首頁</button>
+    <button id="finishBtn" class="btn-success hidden" onclick="finish()">完成挑戰</button>
+    <button id="homeBtn" class="btn-gray hidden" onclick="goHome()">返回選單</button>
   </div>
 
 </div>
 
 <script>
-const grid = document.getElementById("grid");
-const info = document.getElementById("info");
-const menu = document.getElementById("menu");
-const game = document.getElementById("game");
-const finishBtn = document.getElementById("finishBtn");
-const homeBtn = document.getElementById("homeBtn");
+// --- Google 表單正式連線設定 (根據您的連結) ---
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfyac_wa7-tup2Homs1C9qwcQ6J8gppqrXkMUn91wi5D2JifQ/formResponse";
+const ENTRIES = {
+  name: "entry.1069905368",    // 姓名
+  age: "entry.2105453287",     // 年齡
+  status: "entry.1616739560",  // 狀況類型
+  mode: "entry.1883859742",    // 訓練模式
+  score: "entry.1458832135"    // 正確率分數
+};
 
-function speak(t) {
+let currentUser = { name: "", age: "", status: "" };
+let boardScores = [];
+let isBoardMode = false;
+let isDementiaMode = false;
+let pattern = [], userPattern = [];
+let matchedCount = 0;
+let openBlocks = [];
+let matchColors = [];
+
+// 語音播放功能
+function speak(text) {
   if ('speechSynthesis' in window) {
     speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(t);
-    msg.lang = 'zh-TW';
-    speechSynthesis.speak(msg);
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-TW';
+    utter.rate = 0.9;
+    speechSynthesis.speak(utter);
   }
+}
+
+// 數據自動上傳 Google 表單
+function uploadData(gameMode, score) {
+  const formData = new FormData();
+  formData.append(ENTRIES.name, currentUser.name);
+  formData.append(ENTRIES.age, currentUser.age);
+  formData.append(ENTRIES.status, currentUser.status);
+  formData.append(ENTRIES.mode, gameMode);
+  formData.append(ENTRIES.score, score);
+
+  fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData })
+    .then(() => console.log("數據成功紀錄"))
+    .catch(e => console.error("紀錄失敗", e));
+}
+
+// 根據分數獲取五級鼓勵
+function getEncouragement(score) {
+  if (score === 100) return { title: "🌟 神乎其技 🌟", speech: "太厲害了，完美表現！" };
+  if (score >= 80) return { title: "💎 出類拔萃 💎", speech: "非常優秀，表現亮眼！" };
+  if (score >= 60) return { title: "👍 表現優異 👍", speech: "做得好，繼續保持。" };
+  if (score >= 40) return { title: "💪 持之以恆 💪", speech: "不錯喔，再接再厲。" };
+  return { title: "🌱 活化腦力 🌱", speech: "多練習幾次會更好。" };
+}
+
+function login() {
+  const name = document.getElementById("user-name").value;
+  const age = document.getElementById("user-age").value;
+  const status = document.getElementById("user-status").value;
+  if (!name || !age) { alert("請填寫姓名與年齡"); return; }
+  currentUser = { name, age, status };
+  document.getElementById("display-name").innerText = name;
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
+  speak(`您好 ${name}，我們開始練習吧！`);
+}
+
+function logout() {
+  document.getElementById("login-screen").classList.remove("hidden");
+  document.getElementById("menu").classList.add("hidden");
 }
 
 function goHome() {
-  game.classList.add("hidden");
-  menu.classList.remove("hidden");
-  homeBtn.classList.add("hidden");
-  finishBtn.classList.remove("hidden");
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
 }
 
-let mode = "";
-let dementia = false;
-let board = false;
-let boardScores = [];
-
-const COLORS_NORMAL = ["#ef4444", "#3b82f6", "#facc15", "#22c55e", "#f97316", "#a855f7"];
-const COLORS_DEMENTIA = ["#ef4444", "#3b82f6", "#facc15"];
-let pattern = [], userPattern = [];
-
+// --- 記憶訓練邏輯 ---
 function startMemory(d, isBoard) {
-  mode = "memory";
-  dementia = d;
-  board = isBoard;
-  menu.classList.add("hidden");
-  game.classList.remove("hidden");
-  homeBtn.classList.add("hidden");
-  finishBtn.classList.remove("hidden");
+  isDementiaMode = d;
+  isBoardMode = isBoard;
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("homeBtn").classList.add("hidden");
+  document.getElementById("finishBtn").classList.add("hidden");
 
-  const colorPool = d ? COLORS_DEMENTIA : COLORS_NORMAL;
+  const colors = d ? ["#ef4444", "#3b82f6", "#facc15"] : ["#ef4444", "#3b82f6", "#facc15", "#22c55e", "#f97316", "#a855f7"];
   const count = d ? 3 : 4;
-  const showTime = d ? 10000 : 7000;
-
-  grid.style.gridTemplateColumns = `repeat(${count}, 1fr)`;
+  document.getElementById("grid").style.gridTemplateColumns = `repeat(${count}, 1fr)`;
   
-  pattern = [...colorPool].sort(() => Math.random() - 0.5).slice(0, count);
+  pattern = [...colors].sort(() => Math.random() - 0.5).slice(0, count);
   userPattern = Array(count).fill("#9ca3af");
 
-  const roundText = board ? `第 ${boardScores.length + 1} 次挑戰` : "記憶訓練";
-  info.innerHTML = `${roundText}<br><span class="sub">請記住顏色位置</span>`;
-  speak("請記住顏色的位置");
+  const title = isBoard ? `第 ${boardScores.length + 1} 局` : "記憶訓練";
+  document.getElementById("info").innerHTML = `${title}<br><span class="sub">記住顏色位置喔</span>`;
+  speak("請記住這幾個顏色的位置");
   renderMemory(pattern, false);
 
   setTimeout(() => {
-    info.innerHTML = `${roundText}<br><span class="sub">請點選剛才看到的顏色</span>`;
-    speak("請慢慢回想並點選");
+    document.getElementById("info").innerHTML = `${title}<br><span class="sub">請點方塊把顏色變回來</span>`;
+    speak("好，請還原顏色");
     renderMemory(userPattern, true);
-  }, showTime);
+    document.getElementById("finishBtn").classList.remove("hidden");
+  }, d ? 8000 : 5000);
 }
 
 function renderMemory(arr, clickable) {
-  grid.innerHTML = "";
+  const g = document.getElementById("grid");
+  g.innerHTML = "";
   arr.forEach((color, i) => {
-    const block = document.createElement("div");
-    block.className = "block";
-    block.style.background = color;
+    const b = document.createElement("div");
+    b.className = "block";
+    b.style.background = color;
     if (clickable) {
-      block.onclick = () => {
-        const colorPool = dementia ? COLORS_DEMENTIA : COLORS_NORMAL;
-        let nextIdx = (colorPool.indexOf(userPattern[i]) + 1) % colorPool.length;
-        userPattern[i] = colorPool[nextIdx];
-        block.style.background = userPattern[i];
+      b.onclick = () => {
+        const pool = isDementiaMode ? ["#9ca3af", "#ef4444", "#3b82f6", "#facc15"] : ["#9ca3af", "#ef4444", "#3b82f6", "#facc15", "#22c55e", "#f97316", "#a855f7"];
+        let idx = (pool.indexOf(userPattern[i]) + 1) % pool.length;
+        userPattern[i] = pool[idx];
+        b.style.background = userPattern[i];
       };
     }
-    grid.appendChild(block);
+    g.appendChild(b);
   });
-}
-
-// 根據百分比取得五級鼓勵內容
-function getEncouragement(score) {
-  if (score === 100) {
-    return { title: "🌟 神乎其技 🌟", msg: "您的記憶力簡直完美無缺！", speech: "太厲害了，最強力的讚賞，完美表現！" };
-  } else if (score >= 80) {
-    return { title: "💎 出類拔萃 💎", msg: "高度肯定！大腦正充滿活力！", speech: "非常優秀，給您高度肯定，表現亮眼！" };
-  } else if (score >= 60) {
-    return { title: "👍 表現優異 👍", msg: "積極鼓勵！穩定發揮是進步的關鍵。", speech: "做得好，積極鼓勵您，繼續保持。" };
-  } else if (score >= 40) {
-    return { title: "💪 持之以恆 💪", msg: "溫和支撐，大腦正在熱身運作中。", speech: "不錯喔，溫和支撐您，再接再厲。" };
-  } else {
-    return { title: "🌱 活化腦力 🌱", msg: "暖心打氣，每一次嘗試都是在鍛鍊大腦。", speech: "沒關係，暖心為您打氣，多練習幾次會更好。" };
-  }
 }
 
 function finish() {
-  if (mode === "memory") {
-    let correct = 0;
-    pattern.forEach((p, i) => { if (p === userPattern[i]) correct++; });
-    const score = Math.round(correct / pattern.length * 100);
+  let correct = 0;
+  pattern.forEach((p, i) => { if (p === userPattern[i]) correct++; });
+  const score = Math.round(correct / pattern.length * 100);
+  const enc = getEncouragement(score);
 
-    if (board) {
-      boardScores.push(score);
-      const enc = getEncouragement(score);
-      
-      if (boardScores.length < 3) {
-        info.innerHTML = `第 ${boardScores.length} 次挑戰完畢<br><span class="score-badge">正確率 ${score}%</span><br><b class="level-text">${enc.title}</b><span class="sub">${enc.msg}</span>`;
-        speak(`${enc.speech}。準備下一局。`);
-        finishBtn.classList.add("hidden");
-        setTimeout(() => startMemory(false, true), 3500);
-        return;
-      }
-
-      // 三次挑戰結算
+  if (isBoardMode) {
+    boardScores.push(score);
+    if (boardScores.length < 3) {
+      document.getElementById("info").innerHTML = `第 ${boardScores.length} 局完成！<br><span class="score-badge">正確率 ${score}%</span><br><span class="encouragement">${enc.title}</span>`;
+      speak(enc.speech + " 準備下一局。");
+      document.getElementById("finishBtn").classList.add("hidden");
+      setTimeout(() => startMemory(false, true), 3000);
+    } else {
       const avg = Math.round(boardScores.reduce((a, b) => a + b) / 3);
       const finalEnc = getEncouragement(avg);
-      info.innerHTML = `🏅 訓練全部完成 🏅<br><span class="score-badge">平均正確率 ${avg}%</span><br><b class="level-text" style="font-size:1.6rem;">${finalEnc.title}</b><span class="sub" style="font-size:1.2rem; color:#1e3a8a;">${finalEnc.msg}</span>`;
-      speak(`今天的訓練全部完成。平均正確率百分之${avg}。${finalEnc.speech}`);
-    } else {
-      const singleEnc = getEncouragement(score);
-      info.innerHTML = `訓練完成<br><span class="score-badge">正確率 ${score}%</span><br><b class="level-text">${singleEnc.title}</b><span class="sub">${singleEnc.msg}</span>`;
-      speak(singleEnc.speech);
+      document.getElementById("info").innerHTML = `🏅 訓練結束 🏅<br><span class="score-badge">平均正確率 ${avg}%</span><br><span class="encouragement">${finalEnc.title}</span>`;
+      speak(`挑戰結束，平均正確率百分之${avg}。${finalEnc.speech}`);
+      uploadData("訓練板 (3次挑戰)", avg);
+      document.getElementById("finishBtn").classList.add("hidden");
+      document.getElementById("homeBtn").classList.remove("hidden");
     }
-    
-    finishBtn.classList.add("hidden");
-    homeBtn.classList.remove("hidden");
+  } else {
+    document.getElementById("info").innerHTML = `訓練完成！<br><span class="score-badge">正確率 ${score}%</span><br><span class="encouragement">${enc.title}</span>`;
+    speak(`做得好，正確率百分之${score}。${enc.speech}`);
+    uploadData(isDementiaMode ? "失智友善模式" : "一般記憶訓練", score);
+    document.getElementById("finishBtn").classList.add("hidden");
+    document.getElementById("homeBtn").classList.remove("hidden");
   }
 }
 
-function startBoard() {
-  boardScores = [];
-  startMemory(false, true);
-}
+function startBoard() { boardScores = []; startMemory(false, true); }
 
-/* 注意力配對遊戲邏輯保持不變... */
+// --- 注意力配對邏輯 ---
 function startMatch() {
-  mode = "match";
-  menu.classList.add("hidden");
-  game.classList.remove("hidden");
-  homeBtn.classList.add("hidden");
-  finishBtn.classList.add("hidden");
-  matchedCount = 0;
-  openBlocks = [];
-  const baseColors = ["#ef4444", "#3b82f6", "#22c55e"]; 
-  matchColors = [...baseColors, ...baseColors].sort(() => Math.random() - 0.5);
-  grid.style.gridTemplateColumns = "repeat(3, 1fr)";
-  info.innerHTML = "注意力配對<br><span class='sub'>找出兩個一樣的顏色</span>";
-  speak("請找出一樣的顏色，點開方塊配對");
-  grid.innerHTML = "";
-  matchColors.forEach((color) => {
-    const block = document.createElement("div");
-    block.className = "block";
-    block.style.background = "#9ca3af";
-    block.dataset.color = color;
-    block.onclick = () => clickMatch(block);
-    grid.appendChild(block);
-  });
-}
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("finishBtn").classList.add("hidden");
+  document.getElementById("homeBtn").classList.add("hidden");
+  
+  document.getElementById("info").innerHTML = "注意力配對<br><span class='sub'>找出兩個一樣的顏色</span>";
+  speak("請找出兩兩一對的顏色");
 
-let matchColors = [], openBlocks = [], matchedCount = 0;
-function clickMatch(el) {
-  if (openBlocks.length >= 2 || el.classList.contains("matched") || el.dataset.open === "true") return;
-  el.style.background = el.dataset.color;
-  el.dataset.open = "true";
-  openBlocks.push(el);
-  if (openBlocks.length === 2) {
-    if (openBlocks[0].dataset.color === openBlocks[1].dataset.color) {
-      speak("很好");
-      openBlocks.forEach(b => { b.classList.add("matched"); b.dataset.open = "false"; });
-      openBlocks = [];
-      matchedCount += 2;
-      if (matchedCount === matchColors.length) {
-        setTimeout(() => {
-          info.innerHTML = "挑戰成功！<br><span class='sub'>注意力集中度良好</span>";
-          speak("做得太棒了");
-          homeBtn.classList.remove("hidden");
-        }, 500);
+  const colors = ["#ef4444", "#3b82f6", "#facc15", "#22c55e"];
+  matchColors = [...colors, ...colors].sort(() => Math.random() - 0.5);
+  const g = document.getElementById("grid");
+  g.style.gridTemplateColumns = "repeat(3, 1fr)";
+  g.innerHTML = "";
+  matchedCount = 0; openBlocks = [];
+
+  matchColors.forEach((color, i) => {
+    const b = document.createElement("div");
+    b.className = "block";
+    b.style.background = "#9ca3af";
+    b.onclick = () => {
+      if (b.classList.contains("matched") || openBlocks.includes(b) || openBlocks.length >= 2) return;
+      b.style.background = color;
+      openBlocks.push(b);
+      if (openBlocks.length === 2) {
+        const firstIdx = Array.from(g.children).indexOf(openBlocks[0]);
+        const secondIdx = Array.from(g.children).indexOf(openBlocks[1]);
+        if (matchColors[firstIdx] === matchColors[secondIdx]) {
+          speak("答對了");
+          openBlocks.forEach(el => el.classList.add("matched"));
+          openBlocks = [];
+          matchedCount += 2;
+          if (matchedCount === matchColors.length) {
+            setTimeout(() => {
+              document.getElementById("info").innerHTML = "配對成功！<br><span class='score-badge'>100%</span><br><span class='encouragement'>🌟 神乎其技 🌟</span>";
+              speak("做得太棒了，全部答對了！");
+              uploadData("注意力配對", 100);
+              document.getElementById("homeBtn").classList.remove("hidden");
+            }, 500);
+          }
+        } else {
+          setTimeout(() => {
+            openBlocks.forEach(el => el.style.background = "#9ca3af");
+            openBlocks = [];
+          }, 600);
+        }
       }
-    } else {
-      setTimeout(() => {
-        openBlocks.forEach(b => { b.style.background = "#9ca3af"; b.dataset.open = "false"; });
-        openBlocks = [];
-      }, 800);
-    }
-  }
+    };
+    g.appendChild(b);
+  });
 }
 </script>
 </body>
