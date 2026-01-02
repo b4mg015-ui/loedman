@@ -40,6 +40,7 @@
 
   .hidden { display: none !important; }
 
+  /* 按鈕樣式：手機觸控優化 */
   button { 
     font-size: 1.4rem; 
     padding: 18px; 
@@ -99,14 +100,23 @@
     font-weight: 600; 
   }
 
+  /* 強化的等級顯示標籤 */
   .score-badge {
-    background: #dcfce7;
-    color: #166534;
-    padding: 4px 12px;
+    background: #1e3a8a;
+    color: #ffffff;
+    padding: 6px 16px;
     border-radius: 99px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     display: inline-block;
-    margin-top: 5px;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .level-text {
+    font-size: 1.4rem;
+    color: #059669;
+    margin: 10px 0;
+    display: block;
   }
 
   @media (min-width: 768px) {
@@ -121,6 +131,7 @@
 
   <h1>認知訓練</h1>
 
+  <!-- 主選單 -->
   <div id="menu" class="menu">
     <div class="info">
       一天一次即可<br>
@@ -133,6 +144,7 @@
     <button onclick="startMatch()">🎯 注意力配對</button>
   </div>
 
+  <!-- 遊戲區 -->
   <div id="game" class="hidden">
     <div class="info" id="info"></div>
     <div id="grid" class="grid"></div>
@@ -223,25 +235,76 @@ function renderMemory(arr, clickable) {
   });
 }
 
+// 根據百分比取得五級鼓勵內容
+function getEncouragement(score) {
+  if (score === 100) {
+    return { title: "🌟 神乎其技 🌟", msg: "您的記憶力簡直完美無缺！", speech: "太厲害了，最強力的讚賞，完美表現！" };
+  } else if (score >= 80) {
+    return { title: "💎 出類拔萃 💎", msg: "高度肯定！大腦正充滿活力！", speech: "非常優秀，給您高度肯定，表現亮眼！" };
+  } else if (score >= 60) {
+    return { title: "👍 表現優異 👍", msg: "積極鼓勵！穩定發揮是進步的關鍵。", speech: "做得好，積極鼓勵您，繼續保持。" };
+  } else if (score >= 40) {
+    return { title: "💪 持之以恆 💪", msg: "溫和支撐，大腦正在熱身運作中。", speech: "不錯喔，溫和支撐您，再接再厲。" };
+  } else {
+    return { title: "🌱 活化腦力 🌱", msg: "暖心打氣，每一次嘗試都是在鍛鍊大腦。", speech: "沒關係，暖心為您打氣，多練習幾次會更好。" };
+  }
+}
+
+function finish() {
+  if (mode === "memory") {
+    let correct = 0;
+    pattern.forEach((p, i) => { if (p === userPattern[i]) correct++; });
+    const score = Math.round(correct / pattern.length * 100);
+
+    if (board) {
+      boardScores.push(score);
+      const enc = getEncouragement(score);
+      
+      if (boardScores.length < 3) {
+        info.innerHTML = `第 ${boardScores.length} 次挑戰完畢<br><span class="score-badge">正確率 ${score}%</span><br><b class="level-text">${enc.title}</b><span class="sub">${enc.msg}</span>`;
+        speak(`${enc.speech}。準備下一局。`);
+        finishBtn.classList.add("hidden");
+        setTimeout(() => startMemory(false, true), 3500);
+        return;
+      }
+
+      // 三次挑戰結算
+      const avg = Math.round(boardScores.reduce((a, b) => a + b) / 3);
+      const finalEnc = getEncouragement(avg);
+      info.innerHTML = `🏅 訓練全部完成 🏅<br><span class="score-badge">平均正確率 ${avg}%</span><br><b class="level-text" style="font-size:1.6rem;">${finalEnc.title}</b><span class="sub" style="font-size:1.2rem; color:#1e3a8a;">${finalEnc.msg}</span>`;
+      speak(`今天的訓練全部完成。平均正確率百分之${avg}。${finalEnc.speech}`);
+    } else {
+      const singleEnc = getEncouragement(score);
+      info.innerHTML = `訓練完成<br><span class="score-badge">正確率 ${score}%</span><br><b class="level-text">${singleEnc.title}</b><span class="sub">${singleEnc.msg}</span>`;
+      speak(singleEnc.speech);
+    }
+    
+    finishBtn.classList.add("hidden");
+    homeBtn.classList.remove("hidden");
+  }
+}
+
+function startBoard() {
+  boardScores = [];
+  startMemory(false, true);
+}
+
+/* 注意力配對遊戲邏輯保持不變... */
 function startMatch() {
   mode = "match";
   menu.classList.add("hidden");
   game.classList.remove("hidden");
   homeBtn.classList.add("hidden");
   finishBtn.classList.add("hidden");
-  
   matchedCount = 0;
   openBlocks = [];
   const baseColors = ["#ef4444", "#3b82f6", "#22c55e"]; 
-  matchColors = [...baseColors, ...baseColors];
-  matchColors.sort(() => Math.random() - 0.5);
-
+  matchColors = [...baseColors, ...baseColors].sort(() => Math.random() - 0.5);
   grid.style.gridTemplateColumns = "repeat(3, 1fr)";
-  info.innerHTML = "注意力配對<br><span class='sub'>點開兩個一樣的顏色</span>";
+  info.innerHTML = "注意力配對<br><span class='sub'>找出兩個一樣的顏色</span>";
   speak("請找出一樣的顏色，點開方塊配對");
-
   grid.innerHTML = "";
-  matchColors.forEach((color, i) => {
+  matchColors.forEach((color) => {
     const block = document.createElement("div");
     block.className = "block";
     block.style.background = "#9ca3af";
@@ -254,8 +317,7 @@ function startMatch() {
 let matchColors = [], openBlocks = [], matchedCount = 0;
 function clickMatch(el) {
   if (openBlocks.length >= 2 || el.classList.contains("matched") || el.dataset.open === "true") return;
-  const color = el.dataset.color;
-  el.style.background = color;
+  el.style.background = el.dataset.color;
   el.dataset.open = "true";
   openBlocks.push(el);
   if (openBlocks.length === 2) {
@@ -278,53 +340,6 @@ function clickMatch(el) {
       }, 800);
     }
   }
-}
-
-function getEncouragement(score) {
-  if (score === 100) return { title: "🌟 神乎其技 🌟", msg: "您的記憶力簡直完美無缺！", speech: "太厲害了，完美表現！" };
-  if (score >= 80) return { title: "💎 出類拔萃 💎", msg: "非常優秀，大腦正充滿活力！", speech: "非常優秀，表現亮眼！" };
-  if (score >= 60) return { title: "👍 表現優異 👍", msg: "做得好！穩定發揮是進步的關鍵。", speech: "做得好，繼續保持。" };
-  if (score >= 40) return { title: "💪 持之以恆 💪", msg: "不錯喔，大腦正在熱身運作中。", speech: "有進步，再接再厲。" };
-  return { title: "🌱 活化腦力 🌱", msg: "慢慢來沒關係，每一次嘗試都是鍛鍊。", speech: "慢慢來，多練習幾次會更好。" };
-}
-
-function finish() {
-  if (mode === "memory") {
-    let correct = 0;
-    pattern.forEach((p, i) => { if (p === userPattern[i]) correct++; });
-    const score = Math.round(correct / pattern.length * 100);
-
-    if (board) {
-      boardScores.push(score);
-      const encouragement = getEncouragement(score);
-      
-      if (boardScores.length < 3) {
-        info.innerHTML = `第 ${boardScores.length} 次挑戰完畢<br><span class="score-badge">正確率 ${score}%</span><br><span class="sub">${encouragement.msg}</span>`;
-        speak(`${encouragement.speech}。準備下一局。`);
-        finishBtn.classList.add("hidden");
-        setTimeout(() => startMemory(false, true), 3000);
-        return;
-      }
-
-      // 三次總結算
-      const avg = Math.round(boardScores.reduce((a, b) => a + b) / 3);
-      const finalEnc = getEncouragement(avg);
-      info.innerHTML = `🏅 訓練全部完成 🏅<br><span class="score-badge">平均正確率 ${avg}%</span><br><span class="sub" style="color:#1e3a8a; font-size:1.3rem;">${finalEnc.title}</span><br><span class="sub">${finalEnc.msg}</span>`;
-      speak(`今天的訓練全部完成。平均正確率百分之${avg}。${finalEnc.speech}`);
-    } else {
-      const singleEnc = getEncouragement(score);
-      info.innerHTML = `訓練完成<br><span class="score-badge">正確率 ${score}%</span><br><span class="sub">${singleEnc.msg}</span>`;
-      speak(singleEnc.speech);
-    }
-    
-    finishBtn.classList.add("hidden");
-    homeBtn.classList.remove("hidden");
-  }
-}
-
-function startBoard() {
-  boardScores = [];
-  startMemory(false, true);
 }
 </script>
 </body>
